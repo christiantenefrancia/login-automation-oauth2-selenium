@@ -10,6 +10,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.encrypt.BytesEncryptor;
 import org.springframework.security.crypto.encrypt.Encryptors;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,7 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestController
+@Controller
 @RequestMapping("/site")
 public class SiteController {
 
@@ -50,37 +51,32 @@ public class SiteController {
         prefs.put("profile.password_manager_enabled", false);
         options.setExperimentalOption("prefs", prefs);
         driver = null;
-       // options.addArguments("headless");
-
     }
 
     @GetMapping(value = "/stackoverflow")
-    public void loadStackOverflow(){
+    public String loadStackOverflow(){
 
         if(siteService.checkBrowserInstance(driver)) {
             // Start the chrome session
             driver = new ChromeDriver(options);
-
-            driver.manage().window().maximize();
-            driver.get("https://stackoverflow.com/users/login?ssrc=head&returnurl=https%3a%2f%2fstackoverflow.com%2f");
-            driver.findElement(By.id("email")).sendKeys("ctenefrancia@aeoncredit.com.ph");
-            driver.findElement(By.id("password")).sendKeys("choi1994", Keys.ENTER);
-
         } else {
             ((JavascriptExecutor)driver).executeScript("window.open()");
             driver.switchTo().window(siteService.getTabCount(driver));
-            driver.manage().window().maximize();
-            driver.get("https://stackoverflow.com/users/login?ssrc=head&returnurl=https%3a%2f%2fstackoverflow.com%2f");
-            driver.findElement(By.id("email")).sendKeys("ctenefrancia@aeoncredit.com.ph");
-            driver.findElement(By.id("password")).sendKeys("choi1994", Keys.ENTER);
         }
+
+        driver.manage().window().maximize();
+        driver.get("https://stackoverflow.com/users/login?ssrc=head&returnurl=https%3a%2f%2fstackoverflow.com%2f");
+        /*driver.findElement(By.id("email")).sendKeys("ctenefrancia@aeoncredit.com.ph");
+        driver.findElement(By.id("password")).sendKeys("choi1994", Keys.ENTER);*/
+
+        return "index";
 
     }
 
     @GetMapping(value = "/github")
-    public void gitHub(){
+    public String gitHub(){
 
-        Security.setProperty("crypto.policy", "unlimited");
+       /* Security.setProperty("crypto.policy", "unlimited");
         BytesEncryptor encryptor = Encryptors.stronger("password", "5c0744940b5c369b");
         try {
 
@@ -91,26 +87,33 @@ public class SiteController {
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-        }
+        }*/
 
-        /*if(siteService.checkBrowserInstance(driver)) {
+        if(siteService.checkBrowserInstance(driver)) {
             // Start the chrome session
             driver = new ChromeDriver(options);
-
-            driver.manage().window().maximize();
-            driver.get("https://github.com/login");
-            driver.findElement(By.id("login_field")).sendKeys("tenefrancia.cj@gmail.com");
-            driver.findElement(By.id("password")).sendKeys("christian#1994", Keys.ENTER);
-
         } else {
             ((JavascriptExecutor)driver).executeScript("window.open()");
             driver.switchTo().window(siteService.getTabCount(driver));
-            driver.manage().window().maximize();
-            driver.get("https://github.com/login");
-            driver.findElement(By.id("login_field")).sendKeys("tenefrancia.cj@gmail.com");
-            driver.findElement(By.id("password")).sendKeys("christian#1994", Keys.ENTER);
-        }*/
+        }
 
+        driver.manage().window().maximize();
+        driver.get("https://github.com/login");
+        /*driver.findElement(By.id("login_field")).sendKeys("tenefrancia.cj@gmail.com");
+        driver.findElement(By.id("password")).sendKeys("christian#1994", Keys.ENTER);*/
+
+        return "index";
+    }
+
+    @RequestMapping(value = "/index")
+    public String index() {
+        return "index";
+    }
+
+    public void loadMain(){
+        driver = new ChromeDriver(options);
+        driver.manage().window().maximize();
+        driver.get("http://localhost:8080/site/index");
     }
 
 }
